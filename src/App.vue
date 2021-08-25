@@ -1,17 +1,52 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <img src="./assets/logo-pokemon.png" alt="" class="logo">
+    <h1>PokeGuía</h1>
+    <div>
+      <label>Nombre: </label>
+      <input v-model="nombrePokemon" placeholder="Ingrese un pokemon">
+      <button @click="buscarPokemon">Buscar</button>
+    </div>
+    <div>
+      <img :src="datosPokemon.sprites.front_default">
+      <h2>Movimientos</h2>
+      <span v-for="(move, $index) in moves" :key="$index"> 
+        {{ move.move.name }}; 
+      </span>
+      <h2>Habilidades</h2>
+      <span v-for="(ability, $index) in abilities" :key="$index"> 
+        {{ ability.ability.name }}; 
+      </span>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  data: () => ({
+    nombrePokemon: "",
+    datosPokemon: [],
+  }),
+  created() {
+    this.nombrePokemon = "pikachu";
+    this.buscarPokemon();
+  },
+  methods: {
+    buscarPokemon(){
+      fetch(`https://pokeapi.co/api/v2/pokemon/${this.nombrePokemon}`)
+      .then(response => response.json())
+      .then(data => this.datosPokemon = data)
+    }
+  },
+  computed: {
+    moves(){
+      return (this.datosPokemon.moves)
+    },
+    abilities(){
+      return (this.datosPokemon.abilities)
+    }
   }
 }
 </script>
@@ -19,10 +54,12 @@ export default {
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  margin: 20px;
+
+}
+
+.logo {
+  width: 40%;
 }
 </style>
